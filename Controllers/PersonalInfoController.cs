@@ -571,7 +571,7 @@ public class PersonalInfoController : ControllerBase
                 else
                 {
                     var email = new MimeMessage();
-                    email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
+                    email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
                     email.To.Add(MailboxAddress.Parse(lecturer.Email));
                     email.Subject = "รหัสผ่านใหม่เมื่อลืมรหัสผ่าน เว็บแอปพลิเคชัน Senior Project";
                     // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
@@ -607,7 +607,7 @@ public class PersonalInfoController : ControllerBase
                 else
                 {
                     var email = new MimeMessage();
-                    email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
+                    email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
                     email.To.Add(MailboxAddress.Parse(student.Email));
                     email.Subject = "รหัสผ่านใหม่เมื่อลืมรหัสผ่าน เว็บแอปพลิเคชัน Senior Project";
                     // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };

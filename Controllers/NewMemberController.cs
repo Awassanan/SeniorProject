@@ -218,7 +218,7 @@ public class NewMemberController : ControllerBase
             string password = PasswordDict.studentPasswordDict[student.Id];
 
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
+            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
             email.To.Add(MailboxAddress.Parse(student.Email));
             email.Subject = "รหัสผ่านสำหรับเข้าสู่ระบบครั้งแรก เว็บแอปพลิเคชัน Senior Project";
             // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
@@ -309,7 +309,7 @@ public class NewMemberController : ControllerBase
         else
         {
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
+            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
             email.To.Add(MailboxAddress.Parse(student.Email));
             email.Subject = "รหัสผ่านใหม่สำหรับเข้าสู่ระบบครั้งแรก เว็บแอปพลิเคชัน Senior Project";
             // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
@@ -1225,7 +1225,7 @@ public class NewMemberController : ControllerBase
         else
         {
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
+            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
             email.To.Add(MailboxAddress.Parse(advisor1Email));
             email.Subject = "กรุณาตรวจสอบความถูกต้องของข้อมูลโครงงาน หากไม่ถูกต้องโปรดแจ้งนิสิตให้ดำเนินการแก้ไขและติดต่ออ.ชัชวิทย์";
             email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./verify1.html") + proposalInfo.No + "</p>" + "<p style='line-height: 140%;'><b>สาขาวิชา/หลักสูตร: </b>" + proposalInfo.Major + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาไทย: </b>" + proposalInfo.ProjectNameTh + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาอังกฤษ: </b>" + proposalInfo.ProjectNameEn + "</p>" + "<p style='line-height: 140%;'><b>ภาคการศึกษา: </b>" + proposalInfo.Semester + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 1: </b>" + proposalInfo.Advisor1 + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 2: </b>" + proposalInfo.Advisor2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 1: </b>" + proposalInfo.Student1 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 2: </b>" + proposalInfo.Student2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 3: </b>" + proposalInfo.Student3 + "</p>" + System.IO.File.ReadAllText("./verify2.html") };
@@ -1246,7 +1246,7 @@ public class NewMemberController : ControllerBase
                 var advisor2Email = (from t in db.Lecturer where proposal.AdvisorId2 == t.Id select t.Email).FirstOrDefault();
 
                 email = new MimeMessage();
-                email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
+                email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
                 email.To.Add(MailboxAddress.Parse(advisor2Email));
                 email.Subject = "กรุณาตรวจสอบความถูกต้องของข้อมูลโครงงาน กลุ่มที่" + proposalInfo.No + "หากไม่ถูกต้องโปรดแจ้งนิสิตให้ดำเนินการแก้ไขและติดต่ออ.ชัชวิทย์";
                 // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };

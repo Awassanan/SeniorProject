@@ -288,7 +288,7 @@ public class ProposalInfoController : ControllerBase
             else
             {
                 var email = new MimeMessage();
-                email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
+                email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
                 email.To.Add(MailboxAddress.Parse(m.advisor1Email));
                 email.Subject = "กลุ่มที่ " + proposal.Last().No + " ขอเปลี่ยนแปลงโครงงาน/เปิดโครงงานใหม่ เว็บแอปพลิเคชัน Senior Project";
                 // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
@@ -320,7 +320,7 @@ public class ProposalInfoController : ControllerBase
                     else
                     {
                         var email = new MimeMessage();
-                        email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
+                        email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
                         email.To.Add(MailboxAddress.Parse(m.advisor2Email));
                         email.Subject = "กลุ่มที่ " + proposal.Last().No + " ขอเปลี่ยนแปลงโครงงาน/เปิดโครงงานใหม่ เว็บแอปพลิเคชัน Senior Project";
                         // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };

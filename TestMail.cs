@@ -11,7 +11,7 @@ namespace SeniorProject
         {
 
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
+            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
             email.To.Add(MailboxAddress.Parse(receiver));
             email.Subject = subject;
             email.Body = new TextPart(TextFormat.Html) { Text = text };
