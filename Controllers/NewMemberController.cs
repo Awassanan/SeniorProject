@@ -36,7 +36,7 @@ public class NewMemberController : ControllerBase
 {
     static class PasswordDict
     {
-        public static IDictionary<string, string> studentPasswordDict = new Dictionary<string, string>();
+        // public static IDictionary<string, string> studentPasswordDict = new Dictionary<string, string>();
         public static IDictionary<uint, string> lecturerPasswordDict = new Dictionary<uint, string>();
     }
 
@@ -50,82 +50,82 @@ public class NewMemberController : ControllerBase
     // 1. สุ่มรหัสผ่าน + สุ่ม Salt + hash + กรอกใส่ db ให้นิสิตและอาจารย์ (กำลังทำ) --> done
     [Route("randompassword")]
     [HttpPut]
-    public IActionResult Put1(uint SemesterId, string role)
+    public IActionResult Put1(uint SemesterId, string role) // เฉพาะอาจารย์เท่านั้น
     {
-        if (!PasswordDict.studentPasswordDict.IsNullOrEmpty()) PasswordDict.studentPasswordDict.Clear();
+        // if (!PasswordDict.studentPasswordDict.IsNullOrEmpty()) PasswordDict.studentPasswordDict.Clear();
         if (!PasswordDict.lecturerPasswordDict.IsNullOrEmpty()) PasswordDict.lecturerPasswordDict.Clear();
 
         var db = new SeniorProjectDbContext();
-        if (role == "student")
-        {
-            var students = from s in db.Student
-                           join p in db.Proposal on SemesterId equals p.SemesterId
-                           where s.Id == p.StudentId1 || s.Id == p.StudentId2 || s.Id == p.StudentId3
-                           orderby s.Id
-                           select s;
-            var studentArray = students.ToArray();
-            int studentArrayLength = studentArray.Length;
-            String[] passwordList = new String[studentArrayLength];
+        // if (role == "student")
+        // {
+        //     var students = from s in db.Student
+        //                    join p in db.Proposal on SemesterId equals p.SemesterId
+        //                    where s.Id == p.StudentId1 || s.Id == p.StudentId2 || s.Id == p.StudentId3
+        //                    orderby s.Id
+        //                    select s;
+        //     var studentArray = students.ToArray();
+        //     int studentArrayLength = studentArray.Length;
+        //     String[] passwordList = new String[studentArrayLength];
 
-            for (int i = 0; i < studentArrayLength; i++)
-            {
-                Random random = new Random();
-                string lowerCase = "abcdefghijklmnopqrstuvwxyz";
-                string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                string numeric = "0123456789";
-                string specialCase = "?=.*[-+_!@#$%^&*,]";
+        //     for (int i = 0; i < studentArrayLength; i++)
+        //     {
+        //         Random random = new Random();
+        //         string lowerCase = "abcdefghijklmnopqrstuvwxyz";
+        //         string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        //         string numeric = "0123456789";
+        //         string specialCase = "?=.*[-+_!@#$%^&*,]";
 
-                string randLower = new String(Enumerable.Repeat(lowerCase, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
-                string randUpper = new String(Enumerable.Repeat(upperCase, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
-                string randNumeric = new String(Enumerable.Repeat(numeric, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
-                string randSpecial = new String(Enumerable.Repeat(specialCase, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
+        //         string randLower = new String(Enumerable.Repeat(lowerCase, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
+        //         string randUpper = new String(Enumerable.Repeat(upperCase, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
+        //         string randNumeric = new String(Enumerable.Repeat(numeric, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
+        //         string randSpecial = new String(Enumerable.Repeat(specialCase, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
 
-                string concat = randLower + randUpper + randNumeric + randSpecial;
+        //         string concat = randLower + randUpper + randNumeric + randSpecial;
 
-                char[] chars = concat.ToCharArray();
+        //         char[] chars = concat.ToCharArray();
 
-                string randPassword = ShuffleString.KnuthShuffle<char>(chars);
-                passwordList[i] = randPassword;
+        //         string randPassword = ShuffleString.KnuthShuffle<char>(chars);
+        //         passwordList[i] = randPassword;
 
-                byte[] newSalt = new byte[128 / 8];
-                using (var rng = RandomNumberGenerator.Create())
-                {
-                    rng.GetBytes(newSalt);
-                }
+        //         byte[] newSalt = new byte[128 / 8];
+        //         using (var rng = RandomNumberGenerator.Create())
+        //         {
+        //             rng.GetBytes(newSalt);
+        //         }
 
-                string newHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                        password: passwordList[i],
-                        salt: newSalt,
-                        prf: KeyDerivationPrf.HMACSHA1,
-                        iterationCount: 10000,
-                        numBytesRequested: 256 / 8));
+        //         string newHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+        //                 password: passwordList[i],
+        //                 salt: newSalt,
+        //                 prf: KeyDerivationPrf.HMACSHA1,
+        //                 iterationCount: 10000,
+        //                 numBytesRequested: 256 / 8));
 
-                studentArray[i].Password = newHash;
-                studentArray[i].Salt = Convert.ToBase64String(newSalt); // เปลี่ยนจาก byte[] เป็น string
-                db.SaveChanges();
-            }
+        //         studentArray[i].Password = newHash;
+        //         studentArray[i].Salt = Convert.ToBase64String(newSalt); // เปลี่ยนจาก byte[] เป็น string
+        //         db.SaveChanges();
+        //     }
 
-            List<DTOs.StudentRandomPassword> L = new List<DTOs.StudentRandomPassword>();
-            for (int i = 0; i < studentArrayLength; i++)
-            {
-                DTOs.StudentRandomPassword x = new DTOs.StudentRandomPassword();
-                x.studentId = studentArray[i].Id;
-                x.fullname = studentArray[i].Title + studentArray[i].FirstName + " " + studentArray[i].LastName;
-                x.email = studentArray[i].Email;
-                x.password = passwordList[i];
-                bool containKey = PasswordDict.studentPasswordDict.ContainsKey(x.studentId);
-                if (!containKey)
-                {
-                    PasswordDict.studentPasswordDict.Add(studentArray[i].Id, passwordList[i]);
-                }
-                // PasswordDict.studentPasswordDict.Add(studentArray[i].Id, passwordList[i]);
-                L.Add(x);
-            }
-            return (Ok(L));
-            // return (Ok(PasswordDict.studentPasswordDict));
-        }
+        //     List<DTOs.StudentRandomPassword> L = new List<DTOs.StudentRandomPassword>();
+        //     for (int i = 0; i < studentArrayLength; i++)
+        //     {
+        //         DTOs.StudentRandomPassword x = new DTOs.StudentRandomPassword();
+        //         x.studentId = studentArray[i].Id;
+        //         x.fullname = studentArray[i].Title + studentArray[i].FirstName + " " + studentArray[i].LastName;
+        //         x.email = studentArray[i].Email;
+        //         x.password = passwordList[i];
+        //         bool containKey = PasswordDict.studentPasswordDict.ContainsKey(x.studentId);
+        //         if (!containKey)
+        //         {
+        //             PasswordDict.studentPasswordDict.Add(studentArray[i].Id, passwordList[i]);
+        //         }
+        //         // PasswordDict.studentPasswordDict.Add(studentArray[i].Id, passwordList[i]);
+        //         L.Add(x);
+        //     }
+        //     return (Ok(L));
+        //     // return (Ok(PasswordDict.studentPasswordDict));
+        // }
 
-        else if (role == "lecturer")
+        if (role == "lecturer")
         {
             var lecturers = from t in db.Lecturer
                             join p in db.Proposal on SemesterId equals p.SemesterId
@@ -185,7 +185,7 @@ public class NewMemberController : ControllerBase
                 x.fullname = lecturerArray[i].Title + lecturerArray[i].FirstName + " " + lecturerArray[i].LastName;
                 x.email = lecturerArray[i].Email;
                 x.password = passwordList[i];
-                bool containKey = PasswordDict.studentPasswordDict.ContainsKey(x.lecturerId.ToString());
+                bool containKey = PasswordDict.lecturerPasswordDict.ContainsKey((uint)x.lecturerId);
                 if (!containKey)
                 {
                     PasswordDict.lecturerPasswordDict.Add(lecturerArray[i].Id, passwordList[i]);
@@ -209,20 +209,55 @@ public class NewMemberController : ControllerBase
 
         var student = db.Student.Where(x => x.Email.ToLower() == m.studentEmail.ToLower()).FirstOrDefault();
 
+        Random random = new Random();
+        string lowerCase = "abcdefghijklmnopqrstuvwxyz";
+        string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string numeric = "0123456789";
+        string specialCase = "?=.*[-+_!@#$%^&*,]";
+
+        string randLower = new String(Enumerable.Repeat(lowerCase, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
+        string randUpper = new String(Enumerable.Repeat(upperCase, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
+        string randNumeric = new String(Enumerable.Repeat(numeric, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
+        string randSpecial = new String(Enumerable.Repeat(specialCase, 2).Select(s => s[random.Next(s.Length)]).ToArray()).ToString();
+
+        string concat = randLower + randUpper + randNumeric + randSpecial;
+
+        char[] chars = concat.ToCharArray();
+
+        string randPassword = ShuffleString.KnuthShuffle<char>(chars);
+
+        byte[] newSalt = new byte[128 / 8];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(newSalt);
+        }
+
+        string newHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: randPassword,
+                salt: newSalt,
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8));
+
+        student.Password = newHash;
+        student.Salt = Convert.ToBase64String(newSalt); // เปลี่ยนจาก byte[] เป็น string
+
+        db.SaveChanges();
+
         if (student.Id == null) return StatusCode(403, "Student not found!");
 
         else if (student.Phone != null) return StatusCode(403, "Already registered!");
 
         else
         {
-            string password = PasswordDict.studentPasswordDict[student.Id];
+            // string password = PasswordDict.studentPasswordDict[student.Id];
 
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
             email.To.Add(MailboxAddress.Parse(student.Email));
             email.Subject = "รหัสผ่านสำหรับเข้าสู่ระบบครั้งแรก เว็บแอปพลิเคชัน Senior Project";
             // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
-            email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./index1.html") + password + System.IO.File.ReadAllText("./index2.html") };
+            email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./index1.html") + randPassword + System.IO.File.ReadAllText("./index2.html") };
 
             var smtp = new SmtpClient();
 
@@ -235,7 +270,11 @@ public class NewMemberController : ControllerBase
             smtp.Send(email);
             smtp.Disconnect(true);
         }
-        return (Ok());
+        return (Ok(new{
+            studentId = student.Id,
+            fullname = student.Title + student.FirstName + " " + student.LastName,
+            password = randPassword
+        }));
     }
 
     // // เช็คว่ารหัสผ่านที่กรอกตรงกับที่ส่งเมลให้หรือไม่ --> ใช้การขอ token แทน
@@ -301,7 +340,7 @@ public class NewMemberController : ControllerBase
         student.Password = newHash;
         student.Salt = Convert.ToBase64String(newSalt); // เปลี่ยนจาก byte[] เป็น string
 
-        PasswordDict.studentPasswordDict[student.Id] = randPassword; //
+        // PasswordDict.studentPasswordDict[student.Id] = randPassword;
 
         db.SaveChanges();
 
