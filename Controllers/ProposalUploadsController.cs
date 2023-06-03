@@ -289,21 +289,23 @@ public class ProposalUploadsController : ControllerBase
         if (lecturerId == null) return Forbid();
 
         var filename = (from p in db.Proposal
-                            join sem in db.Semester on p.SemesterId equals sem.Id
-                            where p.Id == ProposalId
-                            where p.AdvisorId1 == lecturerId || p.AdvisorId2 == lecturerId || p.CommitteeId1 == lecturerId || p.CommitteeId2 == lecturerId
-                            orderby p.Id
-                            select new
-                            {
-                                name = p.AdvisorId1 == lecturerId ? p.Advisor1UploadFile :
-                                            (p.AdvisorId2 == lecturerId ? p.Advisor2UploadFile :
-                                            (p.CommitteeId1 == lecturerId ? p.Committee1UploadFile :
-                                            (p.CommitteeId2 == lecturerId ? p.Committee2UploadFile : null)))
-                            }).FirstOrDefault();
-        
+                        where (p.Id == ProposalId) && (p.AdvisorId1 == lecturerId || p.AdvisorId2 == lecturerId || p.CommitteeId1 == lecturerId || p.CommitteeId2 == lecturerId)
+                        orderby p.Id
+                        select new
+                        {
+                            name = p.AdvisorId1 == lecturerId ? p.Advisor1UploadFile :
+                                        (p.AdvisorId2 == lecturerId ? p.Advisor2UploadFile :
+                                        (p.CommitteeId1 == lecturerId ? p.Committee1UploadFile :
+                                        (p.CommitteeId2 == lecturerId ? p.Committee2UploadFile : null)))
+                        }).FirstOrDefault();
+
+        if(filename == null) return NotFound();
+
         DTOs.GradingRecord record = new DTOs.GradingRecord();
-        record.FileName = filename.name.ToString();
-        record.URL = Program.UploadURL + "/proposal/grading/" + record.FileName ?? null;
+        record.FileName = filename.name;
+
+        if(record.FileName == null) record.URL = null;
+        else record.URL = Program.UploadURL + "/proposal/grading/" + record.FileName;
 
         return (Ok(record));
     }

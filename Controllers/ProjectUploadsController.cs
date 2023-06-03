@@ -106,16 +106,16 @@ public class ProjectUploadsController : ControllerBase
                        where p.StudentId1 == studentId || p.StudentId2 == studentId || p.StudentId3 == studentId
                        orderby p.SemesterId descending
                        select p).FirstOrDefault();
-        if (project == null) return StatusCode(403, new{error = "Project is null"});
+        if (project == null) return StatusCode(403, new { error = "Project is null" });
 
         var Semester = db.Semester.Find(project.SemesterId);
-        if (Semester == null) return StatusCode(403, new{error = "Semester is null"});
+        if (Semester == null) return StatusCode(403, new { error = "Semester is null" });
 
         var Assignment = db.ProjectAssignment.Find(assignmentId);
-        if (Assignment == null) return StatusCode(403, new{error = "Assignment is null"});
+        if (Assignment == null) return StatusCode(403, new { error = "Assignment is null" });
 
         var file = FormData.Files.GetFile("file");
-        if (file == null) return StatusCode(403, new{error = "File is null"});
+        if (file == null) return StatusCode(403, new { error = "File is null" });
         if (file.Length > Assignment.MaxSize * 1000000) return StatusCode(413); // payload too large
 
         string[] Extensions = Assignment.FileType.ToLower().Split(",");
@@ -293,21 +293,23 @@ public class ProjectUploadsController : ControllerBase
         if (lecturerId == null) return Forbid();
 
         var filename = (from p in db.Project
-                            join sem in db.Semester on p.SemesterId equals sem.Id
-                            where p.Id == ProjectId
-                            where p.AdvisorId1 == lecturerId || p.AdvisorId2 == lecturerId || p.CommitteeId1 == lecturerId || p.CommitteeId2 == lecturerId
-                            orderby p.Id
-                            select new
-                            {
-                                name = p.AdvisorId1 == lecturerId ? p.Advisor1UploadFile :
-                                            (p.AdvisorId2 == lecturerId ? p.Advisor2UploadFile :
-                                            (p.CommitteeId1 == lecturerId ? p.Committee1UploadFile :
-                                            (p.CommitteeId2 == lecturerId ? p.Committee2UploadFile : null)))
-                            }).FirstOrDefault();
-        
+                        where (p.Id == ProjectId) && (p.AdvisorId1 == lecturerId || p.AdvisorId2 == lecturerId || p.CommitteeId1 == lecturerId || p.CommitteeId2 == lecturerId)
+                        orderby p.Id
+                        select new
+                        {
+                            name = p.AdvisorId1 == lecturerId ? p.Advisor1UploadFile :
+                                        (p.AdvisorId2 == lecturerId ? p.Advisor2UploadFile :
+                                        (p.CommitteeId1 == lecturerId ? p.Committee1UploadFile :
+                                        (p.CommitteeId2 == lecturerId ? p.Committee2UploadFile : null)))
+                        }).FirstOrDefault();
+
+        if(filename == null) return NotFound();
+
         DTOs.GradingRecord record = new DTOs.GradingRecord();
-        record.FileName = filename.name.ToString();
-        record.URL = Program.UploadURL + "/project/grading/" + record.FileName ?? null;
+        record.FileName = filename.name;
+
+        if(record.FileName == null) record.URL = null;
+        else record.URL = Program.UploadURL + "/project/grading/" + record.FileName;
 
         return (Ok(record));
     }
