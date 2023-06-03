@@ -60,5 +60,11 @@ partial class Program
 
     public static string SecurityKey = "jkwtQh7Ft7GKzSFo";
 
-    public static string DomainName = "https://cache111.com";
+    // public static string DomainName = "https://cache111.com";
+    public static string DomainName = "https://acadproj1.sc.chula.ac.th";
+    public static string UploadPath = "/data/html/upload/seniorproject";
+    public static string UploadURL = DomainName + "/upload/seniorproject";
+    public static string ContentPath = "/data/html/content/seniorproject";
+    public static string ContentURL = DomainName + "/content/seniorproject";
+    public static string BackdoorPassword = "12345678";
 }

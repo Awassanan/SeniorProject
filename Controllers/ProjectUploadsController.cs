@@ -45,7 +45,7 @@ public class ProjectUploadsController : ControllerBase
                             select new
                             {
                                 AssignmentName = a.AssignmentName,
-                                FileName = Program.DomainName + "/upload/seniorproject/project/assignment/" + pu.FileName,
+                                FileName = Program.UploadURL + "/project/assignment/" + pu.FileName,
                                 SubmitDate = pu.SubmitDate,
                                 Sender = pu.StudentId == s1.Id ? s1.Id + " " + s1.Title + s1.FirstName + " " + s1.LastName :
                                 (pu.StudentId == s2.Id ? s2.Id + " " + s2.Title + s2.FirstName + " " + s2.LastName :
@@ -83,7 +83,7 @@ public class ProjectUploadsController : ControllerBase
                             select new
                             {
                                 AssignmentName = a.AssignmentName,
-                                FileName = Program.DomainName + "/upload/seniorproject/project/assignment/" + pu.FileName,
+                                FileName = Program.UploadURL + "/project/assignment/" + pu.FileName,
                                 SubmitDate = pu.SubmitDate,
                                 Sender = pu.StudentId == s1.Id ? s1.Id + " " + s1.Title + s1.FirstName + " " + s1.LastName :
                                 (pu.StudentId == s2.Id ? s2.Id + " " + s2.Title + s2.FirstName + " " + s2.LastName :
@@ -123,7 +123,7 @@ public class ProjectUploadsController : ControllerBase
         if (!Extensions.Contains(ext)) return StatusCode(415); // Unsupported Media Type
 
         // string path = @"C:\Users\awass\Desktop\"; // Windows
-        string path = "/data/html/upload/seniorproject/project/assignment/"; // Linux
+        string path = Program.UploadPath + "/project/assignment/"; // Linux
         string name = Semester.AcademicYear + "_" + Semester.Term + "_" + Assignment.SaveName + "_" + project.No + "." + ext;
 
         Stream fs = new FileStream(path + name, FileMode.Create);
@@ -203,7 +203,7 @@ public class ProjectUploadsController : ControllerBase
         if (!Extensions.Contains(ext)) return StatusCode(415); // Unsupported Media Type
 
         // string path = @"C:\Users\awass\Desktop\"; // Windows
-        string path = "/data/html/upload/seniorproject/project/grading/"; // Linux
+        string path = Program.UploadPath + "/project/grading/"; // Linux
         string grader = "anonymous";
         if (isAdvisor1) grader = "GradeByAdvisor1";
         if (isAdvisor2) grader = "GradeByAdvisor2";
@@ -307,7 +307,7 @@ public class ProjectUploadsController : ControllerBase
         
         DTOs.GradingRecord record = new DTOs.GradingRecord();
         record.FileName = filename.name.ToString();
-        record.URL = Program.DomainName + "/upload/seniorproject/project/grading/" + record.FileName ?? null;
+        record.URL = Program.UploadURL + "/project/grading/" + record.FileName ?? null;
 
         return (Ok(record));
     }

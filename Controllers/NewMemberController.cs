@@ -209,6 +209,8 @@ public class NewMemberController : ControllerBase
 
         var student = db.Student.Where(x => x.Email.ToLower() == m.studentEmail.ToLower()).FirstOrDefault();
 
+        if(student == null) return StatusCode(403,"Email not found!");
+
         Random random = new Random();
         string lowerCase = "abcdefghijklmnopqrstuvwxyz";
         string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -253,11 +255,11 @@ public class NewMemberController : ControllerBase
             // string password = PasswordDict.studentPasswordDict[student.Id];
 
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
+            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
             email.To.Add(MailboxAddress.Parse(student.Email));
             email.Subject = "รหัสผ่านสำหรับเข้าสู่ระบบครั้งแรก เว็บแอปพลิเคชัน Senior Project";
-            // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
-            email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./index1.html") + randPassword + System.IO.File.ReadAllText("./index2.html") };
+            // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "โปรดกรอกรหัสผ่านทันทีที่ได้รับ" };
+            email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/password1.html") + randPassword + System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/password2.html") };
 
             var smtp = new SmtpClient();
 
@@ -307,6 +309,8 @@ public class NewMemberController : ControllerBase
 
         var student = db.Student.Where(x => x.Email.ToLower() == m.studentEmail.ToLower()).FirstOrDefault();
 
+        if(student == null) return StatusCode(403,"Student not found!");
+
         Random random = new Random();
         string lowerCase = "abcdefghijklmnopqrstuvwxyz";
         string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -348,11 +352,11 @@ public class NewMemberController : ControllerBase
         else
         {
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
+            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
             email.To.Add(MailboxAddress.Parse(student.Email));
             email.Subject = "รหัสผ่านใหม่สำหรับเข้าสู่ระบบครั้งแรก เว็บแอปพลิเคชัน Senior Project";
-            // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
-            email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./index1.html") + randPassword + System.IO.File.ReadAllText("./index2.html") };
+            // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "โปรดกรอกรหัสผ่านทันทีที่ได้รับ" };
+            email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/password1.html") + randPassword + System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/password2.html") };
 
             var smtp = new SmtpClient();
 
@@ -748,21 +752,15 @@ public class NewMemberController : ControllerBase
     // ดึงรายชื่อนิสิตทั้งหมดมาใส่ drop down ให้เลือกเป็นสมาชิก
     [Route("studentlist")]
     [HttpGet]
-    public IActionResult Get3(uint SemesterId, string major)
+    public IActionResult Get3(string major, string email)
     {
         var db = new SeniorProjectDbContext();
 
-        var studentList = from s in db.Student
-                          join _p1 in db.Proposal on s.Id equals _p1.StudentId1 into join1
-                          from p1 in join1.DefaultIfEmpty()
-                          join _p2 in db.Proposal on s.Id equals _p2.StudentId2 into join2
-                          from p2 in join2.DefaultIfEmpty()
-                          join _p3 in db.Proposal on s.Id equals _p3.StudentId3 into join3
-                          from p3 in join3.DefaultIfEmpty()
-                          where (s.Major == major)
-                          && ((p1.SemesterId == SemesterId && p1.StudentId1 == s.Id) || (p2.SemesterId == SemesterId && p2.StudentId2 == s.Id) || (p3.SemesterId == SemesterId && p3.StudentId3 == s.Id))
-                          select s;
+        // var year = email.Substring(0,2);
+        var year = ((from s in db.Student where s.Email == email select s.Id).FirstOrDefault()).Substring(0,2);
 
+        var studentList = from s in db.Student where s.Id.StartsWith(year) && s.Major == major select s;
+                          
         if (!studentList.Any()) return NoContent();
         List<DTOs.StudentList> L = new List<DTOs.StudentList>();
         foreach (var s in studentList)
@@ -994,6 +992,7 @@ public class NewMemberController : ControllerBase
 
         return Ok();
     }
+    
     // เพิ่มข้อมูลโครงงาน
     [Route("addProjectInfo")]
     [HttpPut]
@@ -1264,10 +1263,10 @@ public class NewMemberController : ControllerBase
         else
         {
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
+            email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
             email.To.Add(MailboxAddress.Parse(advisor1Email));
             email.Subject = "กรุณาตรวจสอบความถูกต้องของข้อมูลโครงงาน หากไม่ถูกต้องโปรดแจ้งนิสิตให้ดำเนินการแก้ไขและติดต่ออ.ชัชวิทย์";
-            email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./verify1.html") + proposalInfo.No + "</p>" + "<p style='line-height: 140%;'><b>สาขาวิชา/หลักสูตร: </b>" + proposalInfo.Major + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาไทย: </b>" + proposalInfo.ProjectNameTh + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาอังกฤษ: </b>" + proposalInfo.ProjectNameEn + "</p>" + "<p style='line-height: 140%;'><b>ภาคการศึกษา: </b>" + proposalInfo.Semester + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 1: </b>" + proposalInfo.Advisor1 + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 2: </b>" + proposalInfo.Advisor2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 1: </b>" + proposalInfo.Student1 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 2: </b>" + proposalInfo.Student2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 3: </b>" + proposalInfo.Student3 + "</p>" + System.IO.File.ReadAllText("./verify2.html") };
+            email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/verify1.html") + proposalInfo.No + "</p>" + "<p style='line-height: 140%;'><b>สาขาวิชา/หลักสูตร: </b>" + proposalInfo.Major + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาไทย: </b>" + proposalInfo.ProjectNameTh + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาอังกฤษ: </b>" + proposalInfo.ProjectNameEn + "</p>" + "<p style='line-height: 140%;'><b>ภาคการศึกษา: </b>" + proposalInfo.Semester + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 1: </b>" + proposalInfo.Advisor1 + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 2: </b>" + proposalInfo.Advisor2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 1: </b>" + proposalInfo.Student1 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 2: </b>" + proposalInfo.Student2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 3: </b>" + proposalInfo.Student3 + "</p>" + System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/verify2.html") };
 
             var smtp = new SmtpClient();
 
@@ -1285,11 +1284,11 @@ public class NewMemberController : ControllerBase
                 var advisor2Email = (from t in db.Lecturer where proposal.AdvisorId2 == t.Id select t.Email).FirstOrDefault();
 
                 email = new MimeMessage();
-                email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
+                email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
                 email.To.Add(MailboxAddress.Parse(advisor2Email));
                 email.Subject = "กรุณาตรวจสอบความถูกต้องของข้อมูลโครงงาน กลุ่มที่" + proposalInfo.No + "หากไม่ถูกต้องโปรดแจ้งนิสิตให้ดำเนินการแก้ไขและติดต่ออ.ชัชวิทย์";
-                // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
-                email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./verify1.html") + proposalInfo.No + "</p>" + "<p style='line-height: 140%;'><b>สาขาวิชา/หลักสูตร: </b>" + proposalInfo.Major + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาไทย: </b>" + proposalInfo.ProjectNameTh + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาอังกฤษ: </b>" + proposalInfo.ProjectNameEn + "</p>" + "<p style='line-height: 140%;'><b>ภาคการศึกษา: </b>" + proposalInfo.Semester + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 1: </b>" + proposalInfo.Advisor1 + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 2: </b>" + proposalInfo.Advisor2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 1: </b>" + proposalInfo.Student1 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 2: </b>" + proposalInfo.Student2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 3: </b>" + proposalInfo.Student3 + "</p>" + System.IO.File.ReadAllText("./verify2.html") };
+                // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "โปรดกรอกรหัสผ่านทันทีที่ได้รับ" };
+                email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/verify1.html") + proposalInfo.No + "</p>" + "<p style='line-height: 140%;'><b>สาขาวิชา/หลักสูตร: </b>" + proposalInfo.Major + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาไทย: </b>" + proposalInfo.ProjectNameTh + "</p>" + "<p style='line-height: 140%;'><b>ชื่อโครงงานภาษาอังกฤษ: </b>" + proposalInfo.ProjectNameEn + "</p>" + "<p style='line-height: 140%;'><b>ภาคการศึกษา: </b>" + proposalInfo.Semester + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 1: </b>" + proposalInfo.Advisor1 + "</p>" + "<p style='line-height: 140%;'><b>อาจารย์ที่ปรึกษาโครงงาน 2: </b>" + proposalInfo.Advisor2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 1: </b>" + proposalInfo.Student1 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 2: </b>" + proposalInfo.Student2 + "</p>" + "<p style='line-height: 140%;'><b>สมาชิกโครงงาน 3: </b>" + proposalInfo.Student3 + "</p>" + System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/verify2.html") };
 
                 smtp = new SmtpClient();
 

@@ -204,10 +204,10 @@ public class ProposalInfoController : ControllerBase
             bool isCommittee1 = (lecturer.CommitteeId1 == lecturerId);
             bool isCommittee2 = (lecturer.CommitteeId2 == lecturerId);
 
-            x.Advisor1UploadFile = (p.Advisor1UploadFile == null ? null : (isAdvisor1 ? Program.DomainName + "/upload/seniorproject/proposal/grading/" + p.Advisor1UploadFile : "#"));
-            x.Advisor2UploadFile = (p.Advisor2UploadFile == null ? null : (isAdvisor2 ? Program.DomainName + "/upload/seniorproject/proposal/grading/" + p.Advisor2UploadFile : "#"));
-            x.Committee1UploadFile = (p.Committee1UploadFile == null ? null : (isCommittee1 ? Program.DomainName + "/upload/seniorproject/proposal/grading/" + p.Committee1UploadFile : "#"));
-            x.Committee2UploadFile = (p.Committee2UploadFile == null ? null : (isCommittee2 ? Program.DomainName + "/upload/seniorproject/proposal/grading/" + p.Committee2UploadFile : "#"));
+            x.Advisor1UploadFile = (p.Advisor1UploadFile == null ? null : (isAdvisor1 ? Program.UploadURL + "/proposal/grading/" + p.Advisor1UploadFile : "#"));
+            x.Advisor2UploadFile = (p.Advisor2UploadFile == null ? null : (isAdvisor2 ? Program.UploadURL + "/proposal/grading/" + p.Advisor2UploadFile : "#"));
+            x.Committee1UploadFile = (p.Committee1UploadFile == null ? null : (isCommittee1 ? Program.UploadURL + "/proposal/grading/" + p.Committee1UploadFile : "#"));
+            x.Committee2UploadFile = (p.Committee2UploadFile == null ? null : (isCommittee2 ? Program.UploadURL + "/proposal/grading/" + p.Committee2UploadFile : "#"));
 
             // x.GradeStudent1 = p.GradeStudent1;
             // x.GradeStudent2 = p.GradeStudent2;
@@ -288,11 +288,11 @@ public class ProposalInfoController : ControllerBase
             else
             {
                 var email = new MimeMessage();
-                email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
+                email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
                 email.To.Add(MailboxAddress.Parse(m.advisor1Email));
                 email.Subject = "กลุ่มที่ " + proposal.Last().No + " ขอเปลี่ยนแปลงโครงงาน/เปิดโครงงานใหม่ เว็บแอปพลิเคชัน Senior Project";
-                // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
-                email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./changeProj1.html") + proposal.Last().No + System.IO.File.ReadAllText("./changeProj2.html") };
+                // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "โปรดกรอกรหัสผ่านทันทีที่ได้รับ" };
+                email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/changeProj1.html") + proposal.Last().No + System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/changeProj2.html") };
 
                 var smtp = new SmtpClient();
 
@@ -320,11 +320,11 @@ public class ProposalInfoController : ControllerBase
                     else
                     {
                         var email = new MimeMessage();
-                        email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
+                        email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
                         email.To.Add(MailboxAddress.Parse(m.advisor2Email));
                         email.Subject = "กลุ่มที่ " + proposal.Last().No + " ขอเปลี่ยนแปลงโครงงาน/เปิดโครงงานใหม่ เว็บแอปพลิเคชัน Senior Project";
-                        // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
-                        email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./changeProj1.html") + proposal.Last().No + System.IO.File.ReadAllText("./changeProj2.html") };
+                        // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "โปรดกรอกรหัสผ่านทันทีที่ได้รับ" };
+                        email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/changeProj1.html") + proposal.Last().No + System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/changeProj2.html") };
 
                         var smtp = new SmtpClient();
 

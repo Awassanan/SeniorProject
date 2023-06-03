@@ -33,7 +33,7 @@ public class LineGroupsController : ControllerBase
     public IActionResult Get1()
     {
 
-        return Ok(new { url = "https://line.me/R/ti/g/not2webvGL", qr = Program.DomainName + "/content/seniorproject/proposal/2301399.png" });
+        return Ok(new { url = "https://line.me/R/ti/g/not2webvGL", qr = Program.ContentURL + "/proposal/2301399.png" });
     }
 
     [Route("project")] // https://cache111.com/seniorprojectapi/linegroups/project
@@ -41,6 +41,6 @@ public class LineGroupsController : ControllerBase
     public IActionResult Get2()
     {
 
-        return Ok(new { url = "https://line.me/R/ti/g/GrET5Qkqf3", qr = Program.DomainName + "/content/seniorproject/project/2301499.png" });
+        return Ok(new { url = "https://line.me/R/ti/g/GrET5Qkqf3", qr = Program.ContentURL + "/project/2301499.png" });
     }
 }

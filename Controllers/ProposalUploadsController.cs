@@ -42,7 +42,7 @@ public class ProposalUploadsController : ControllerBase
                             select new
                             {
                                 AssignmentName = a.AssignmentName,
-                                FileName = Program.DomainName + "/upload/seniorproject/proposal/assignment/" + pu.FileName,
+                                FileName = Program.UploadURL + "/proposal/assignment/" + pu.FileName,
                                 SubmitDate = pu.SubmitDate,
                                 Sender = pu.StudentId == s1.Id ? s1.Id + " " + s1.Title + s1.FirstName + " " + s1.LastName :
                                 (pu.StudentId == s2.Id ? s2.Id + " " + s2.Title + s2.FirstName + " " + s2.LastName :
@@ -79,7 +79,7 @@ public class ProposalUploadsController : ControllerBase
                             select new
                             {
                                 AssignmentName = a.AssignmentName,
-                                FileName = Program.DomainName + "/upload/seniorproject/proposal/assignment/" + pu.FileName,
+                                FileName = Program.UploadURL + "/proposal/assignment/" + pu.FileName,
                                 SubmitDate = pu.SubmitDate,
                                 Sender = pu.StudentId == s1.Id ? s1.Id + " " + s1.Title + s1.FirstName + " " + s1.LastName :
                                 (pu.StudentId == s2.Id ? s2.Id + " " + s2.Title + s2.FirstName + " " + s2.LastName :
@@ -118,7 +118,7 @@ public class ProposalUploadsController : ControllerBase
         if (!Extensions.Contains(ext)) return StatusCode(415); // Unsupported Media Type
 
         // string path = @"C:\Users\awass\Desktop\"; // Windows
-        string path = "/data/html/upload/seniorproject/proposal/assignment/"; // Linux
+        string path = Program.UploadPath + "/proposal/assignment/"; // Linux
         string name = Semester.AcademicYear + "_" + Semester.Term + "_" + Assignment.SaveName + "_" + proposal.No + "." + ext;
 
         // Stream fs = new FileStream(path + name, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
@@ -198,7 +198,7 @@ public class ProposalUploadsController : ControllerBase
         if (!Extensions.Contains(ext)) return StatusCode(415);
 
         // string path = @"C:\Users\awass\Desktop\"; // Windows
-        string path = "/data/html/upload/seniorproject/proposal/grading/"; // Linux
+        string path = Program.UploadPath + "/proposal/grading/"; // Linux
         string grader = "anonymous";
         if (isAdvisor1) grader = "GradeByAdvisor1";
         if (isAdvisor2) grader = "GradeByAdvisor2";
@@ -303,7 +303,7 @@ public class ProposalUploadsController : ControllerBase
         
         DTOs.GradingRecord record = new DTOs.GradingRecord();
         record.FileName = filename.name.ToString();
-        record.URL = Program.DomainName + "/upload/seniorproject/proposal/grading/" + record.FileName ?? null;
+        record.URL = Program.UploadURL + "/proposal/grading/" + record.FileName ?? null;
 
         return (Ok(record));
     }

@@ -103,7 +103,7 @@ public class ProjectSummaryController : ControllerBase
                             select new
                             {
                                 LastAssignmentName = a.AssignmentName,
-                                LastAssignmentURL = Program.DomainName + "/upload/seniorproject/project/assignment/" + u.FileName,
+                                LastAssignmentURL = Program.UploadURL + "/project/assignment/" + u.FileName,
                                 LastSubmitDate = u.SubmitDate
                             }).FirstOrDefault();
             if (Project != null)

@@ -198,10 +198,10 @@ public class ProjectInfoController : ControllerBase
             bool isCommittee1 = (lecturer.CommitteeId1 == lecturerId);
             bool isCommittee2 = (lecturer.CommitteeId2 == lecturerId);
 
-            x.Advisor1UploadFile = (p.Advisor1UploadFile == null ? null : (isAdvisor1 ? Program.DomainName + "/upload/seniorproject/project/grading/" + p.Advisor1UploadFile : "#"));
-            x.Advisor2UploadFile = (p.Advisor2UploadFile == null ? null : (isAdvisor2 ? Program.DomainName + "/upload/seniorproject/project/grading/" + p.Advisor2UploadFile : "#"));
-            x.Committee1UploadFile = (p.Committee1UploadFile == null ? null : (isCommittee1 ? Program.DomainName + "/upload/seniorproject/project/grading/" + p.Committee1UploadFile : "#"));
-            x.Committee2UploadFile = (p.Committee2UploadFile == null ? null : (isCommittee2 ? Program.DomainName + "/upload/seniorproject/project/grading/" + p.Committee2UploadFile : "#"));
+            x.Advisor1UploadFile = (p.Advisor1UploadFile == null ? null : (isAdvisor1 ? Program.UploadURL + "/project/grading/" + p.Advisor1UploadFile : "#"));
+            x.Advisor2UploadFile = (p.Advisor2UploadFile == null ? null : (isAdvisor2 ? Program.UploadURL + "/project/grading/" + p.Advisor2UploadFile : "#"));
+            x.Committee1UploadFile = (p.Committee1UploadFile == null ? null : (isCommittee1 ? Program.UploadURL + "/project/grading/" + p.Committee1UploadFile : "#"));
+            x.Committee2UploadFile = (p.Committee2UploadFile == null ? null : (isCommittee2 ? Program.UploadURL + "/project/grading/" + p.Committee2UploadFile : "#"));
 
             x.GradeStudent1 = p.GradeStudent1;
             x.GradeStudent2 = p.GradeStudent2;

@@ -58,7 +58,7 @@ public class PersonalInfoController : ControllerBase
                         phoneNumber = i.Phone,
                         email = i.Email,
                         address = i.Address,
-                        profilePicture = Program.DomainName + "/upload/seniorproject/profilepictures/student/" + i.ProfilePicture
+                        profilePicture = Program.UploadURL + "/profilepictures/student/" + i.ProfilePicture
                     }).FirstOrDefault();
 
         if (info == null) return NoContent();
@@ -86,7 +86,7 @@ public class PersonalInfoController : ControllerBase
                         fullName = i.Title + i.FirstName + " " + i.LastName,
                         phoneNumber = i.Phone,
                         email = i.Email,
-                        profilePicture = Program.DomainName + "/upload/seniorproject/profilepictures/lecturer/" + i.ProfilePicture
+                        profilePicture = Program.UploadURL + "/profilepictures/lecturer/" + i.ProfilePicture
                     }).FirstOrDefault();
 
         if (info == null) return NoContent();
@@ -311,7 +311,7 @@ public class PersonalInfoController : ControllerBase
         if (!Extensions.Contains(ext)) return StatusCode(415); // Unsupported Media Type
 
         // string path = @"C:\Users\awass\Desktop\"; // Windows
-        string path = "/data/html/upload/seniorproject/profilepictures/student/"; // Linux
+        string path = Program.UploadPath + "/profilepictures/student/"; // Linux
 
         string random = RandomString.CreateRandomString(10);
 
@@ -350,7 +350,7 @@ public class PersonalInfoController : ControllerBase
         if (!Extensions.Contains(ext)) return StatusCode(415); // Unsupported Media Type
 
         // string path = @"C:\Users\awass\Desktop\"; // Windows
-        string path = "/data/html/upload/seniorproject/profilepictures/lecturer/"; // Linux
+        string path = Program.UploadPath + "/profilepictures/lecturer/"; // Linux
 
         string random = RandomString.CreateRandomString(10);
 
@@ -571,11 +571,11 @@ public class PersonalInfoController : ControllerBase
                 else
                 {
                     var email = new MimeMessage();
-                    email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
+                    email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
                     email.To.Add(MailboxAddress.Parse(lecturer.Email));
                     email.Subject = "รหัสผ่านใหม่เมื่อลืมรหัสผ่าน เว็บแอปพลิเคชัน Senior Project";
-                    // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
-                    email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./index1.html") + randPassword + System.IO.File.ReadAllText("./index2.html") };
+                    // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "โปรดกรอกรหัสผ่านทันทีที่ได้รับ" };
+                    email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/password1.html") + randPassword + System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/password2.html") };
 
                     var smtp = new SmtpClient();
 
@@ -607,11 +607,11 @@ public class PersonalInfoController : ControllerBase
                 else
                 {
                     var email = new MimeMessage();
-                    email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@gmail.com"));
+                    email.From.Add(new MailboxAddress("Chatchawit Aporntewan", "chatchawit.a@chula.ac.th"));
                     email.To.Add(MailboxAddress.Parse(student.Email));
                     email.Subject = "รหัสผ่านใหม่เมื่อลืมรหัสผ่าน เว็บแอปพลิเคชัน Senior Project";
-                    // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "กรุณากรอกภายใน 1 นาที" };
-                    email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText("./index1.html") + randPassword + System.IO.File.ReadAllText("./index2.html") };
+                    // email.Body = new TextPart(TextFormat.Html) { Text = "<p> รหัสผ่านของคุณคือ <br/>" + password + "<br/>" + "โปรดกรอกรหัสผ่านทันทีที่ได้รับ" };
+                    email.Body = new TextPart(TextFormat.Html) { Text = System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/password1.html") + randPassword + System.IO.File.ReadAllText(Program.ContentPath + "/proposal/templates/password2.html") };
 
                     var smtp = new SmtpClient();
 

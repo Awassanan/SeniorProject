@@ -30,19 +30,22 @@ public class SemestersController : ControllerBase
 
     [Route("")]
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get1()
     {
         var db = new SeniorProjectDbContext();
-        var semester = from s in db.Semester orderby s.StartDate descending select new {
-            id = s.Id,
-            fullSemester = s.AcademicYear + "/" + s.Term,
-            academicYear = s.AcademicYear,
-            term = s.Term,
-            startDate = ((DateOnly)s.StartDate).ToString("yyyy-MM-dd"),
-            endDate = ((DateOnly)s.EndDate).ToString("yyyy-MM-dd")
-        };
+        var semester = from s in db.Semester
+                       orderby s.StartDate descending
+                       select new
+                       {
+                           id = s.Id,
+                           fullSemester = s.AcademicYear + "/" + s.Term,
+                           academicYear = s.AcademicYear,
+                           term = s.Term,
+                           startDate = ((DateOnly)s.StartDate).ToString("yyyy-MM-dd"),
+                           endDate = ((DateOnly)s.EndDate).ToString("yyyy-MM-dd")
+                       };
 
-        if(!semester.Any()) return NoContent();
+        if (!semester.Any()) return NoContent();
 
         return Ok(semester); // default toggle --> แก้ตามเทอม
     }
@@ -52,17 +55,57 @@ public class SemestersController : ControllerBase
     public IActionResult Get(uint id)
     {
         var db = new SeniorProjectDbContext();
-        var semester = (from s in db.Semester where s.Id == id select new {
-            id = s.Id,
-            fullSemester = s.AcademicYear + "/" + s.Term,
-            academicYear = s.AcademicYear,
-            term = s.Term,
-            startDate = ((DateOnly)s.StartDate).ToString("yyyy-MM-dd"),
-            endDate = ((DateOnly)s.EndDate).ToString("yyyy-MM-dd")
-        }).FirstOrDefault();
+        var semester = (from s in db.Semester
+                        where s.Id == id
+                        select new
+                        {
+                            id = s.Id,
+                            fullSemester = s.AcademicYear + "/" + s.Term,
+                            academicYear = s.AcademicYear,
+                            term = s.Term,
+                            startDate = ((DateOnly)s.StartDate).ToString("yyyy-MM-dd"),
+                            endDate = ((DateOnly)s.EndDate).ToString("yyyy-MM-dd")
+                        }).FirstOrDefault();
 
-        if(semester == null) return NotFound();
+        if (semester == null) return NotFound();
 
         return Ok(semester); // default toggle --> แก้ตามเทอม
+    }
+
+    [Route("getCurrent")]
+    [HttpGet]
+    public IActionResult Get2()
+    {
+        var db = new SeniorProjectDbContext();
+        var semester = (from s in db.Semester
+                        where s.StartDate <= DateOnly.FromDateTime(DateTime.Now)
+                        orderby s.Id descending
+                        select s).FirstOrDefault();
+
+        if (semester == null) return NotFound();
+
+        if (semester.Term == 1)
+        {
+            return Ok(new
+            {
+                semesterId = semester.Id,
+                fullSemester = semester.AcademicYear + "/" + semester.Term,
+                toggle = false,
+                mode = "proposal"
+            });
+        }
+
+        else if (semester.Term == 2 || semester.Term == 3)
+        {
+            return Ok(new
+            {
+                semesterId = semester.Id,
+                fullSemester = semester.AcademicYear + "/" + semester.Term,
+                toggle = true,
+                mode = "project"
+            });
+        }
+
+        else return StatusCode(403,"Term must be 1, 2, or 3 only!");
     }
 }
