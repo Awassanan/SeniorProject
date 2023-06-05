@@ -43,7 +43,8 @@ public class PersonalInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        // var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var info = (from i in db.Student
                     where i.Id == studentId
@@ -100,7 +101,7 @@ public class PersonalInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var student = (from s in db.Student
                        where s.Id == studentId
@@ -126,7 +127,7 @@ public class PersonalInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var student = (from s in db.Student
                        where s.Id == studentId
@@ -178,7 +179,7 @@ public class PersonalInfoController : ControllerBase
     public IActionResult Put4([FromBody] DTOs.Password p)
     {
         var db = new SeniorProjectDbContext();
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
         var student = db.Student.Find(studentId);
 
         if (student == null) return Forbid();
@@ -238,7 +239,7 @@ public class PersonalInfoController : ControllerBase
     public IActionResult Put6([FromBody] DTOs.Password p)
     {
         var db = new SeniorProjectDbContext();
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
         var student = db.Student.Find(studentId);
 
         if (student == null) return Forbid();
@@ -297,8 +298,8 @@ public class PersonalInfoController : ControllerBase
     [Authorize(Roles = "student")]
     public IActionResult Put1(IFormCollection FormData)
     {
-        var studentId = (User.Identity.Name.Split('@'))[0];
         var db = new SeniorProjectDbContext();
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
         var student = db.Student.Find(studentId);
         if (student == null) return Forbid();
 
@@ -375,7 +376,7 @@ public class PersonalInfoController : ControllerBase
     public IActionResult Put1([FromBody] DTOs.Password p)
     {
         var db = new SeniorProjectDbContext();
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
         var student = db.Student.Find(studentId);
 
         if (student == null) return Forbid();
@@ -526,9 +527,11 @@ public class PersonalInfoController : ControllerBase
 
         var db = new SeniorProjectDbContext();
 
-        var lecturer = db.Lecturer.Where(x => x.Email.ToLower() == f.Email.ToLower()).FirstOrDefault();
-        var student = db.Student.Where(x => x.Email.ToLower() == f.Email.ToLower()).FirstOrDefault();
-
+        // var lecturer = db.Lecturer.Where(x => x.Email.ToLower() == f.Email.ToLower() && x.Keyword == f.Keyword).FirstOrDefault();
+        // var student = db.Student.Where(x => x.Email.ToLower() == f.Email.ToLower() && x.Keyword == f.Keyword).FirstOrDefault();
+        var lecturer = (from t in db.Lecturer where t.Email == f.Email.ToLower() && t.Keyword == f.Keyword select t).FirstOrDefault();
+        var student = (from s in db.Student where s.Email == f.Email.ToLower() && s.Keyword == f.Keyword select s).FirstOrDefault();
+        
         if (student != null || lecturer != null)
         {
             Random random = new Random();
@@ -633,7 +636,6 @@ public class PersonalInfoController : ControllerBase
                 }));
             }
         }
-
-        return (Ok());
+        return StatusCode(403, "Lecturer or Student not found!");
     }
 }

@@ -36,7 +36,7 @@ public class ProjectInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var projectInfo = (from p in db.Project
                            join sem in db.Semester on p.SemesterId equals sem.Id
@@ -219,7 +219,7 @@ public class ProjectInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var project = (from p in db.Project
                        where p.StudentId1 == studentId || p.StudentId2 == studentId || p.StudentId3 == studentId
@@ -244,7 +244,7 @@ public class ProjectInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var project = (from p in db.Project
                        where p.StudentId1 == studentId || p.StudentId2 == studentId || p.StudentId3 == studentId

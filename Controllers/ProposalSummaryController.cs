@@ -100,6 +100,7 @@ public class ProposalSummaryController : ControllerBase
             var proposal = (from u in db2.ProposalUpload
                             where u.ProposalId == p.Id
                             join a in db2.ProposalAssignment on u.AssignmentId equals a.Id
+                            orderby u.SubmitDate descending
                             select new
                             {
                                 LastAssignmentName = a.AssignmentName,

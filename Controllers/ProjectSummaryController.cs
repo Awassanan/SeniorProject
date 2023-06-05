@@ -100,6 +100,7 @@ public class ProjectSummaryController : ControllerBase
             var Project = (from u in db2.ProjectUpload
                             where u.ProjectId == p.Id
                             join a in db2.ProjectAssignment on u.AssignmentId equals a.Id
+                            orderby u.SubmitDate descending
                             select new
                             {
                                 LastAssignmentName = a.AssignmentName,

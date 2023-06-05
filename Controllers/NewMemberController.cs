@@ -454,7 +454,7 @@ public class NewMemberController : ControllerBase
                                     ProjectNameTh = p.ProjectNameTh,
                                     ProjectNameEn = p.ProjectNameEn,
                                     Semester = sem.AcademicYear + "/" + sem.Term,
-                                    Advisor1 = a1.Title + a1.FirstName + " " + a1.LastName,
+                                    Advisor1 = p.AdvisorId1 == null ? null : a1.Title + a1.FirstName + " " + a1.LastName,
                                     Advisor2 = p.AdvisorId2 == null ? null : a2.Title + a2.FirstName + " " + a2.LastName,
                                     Committee1 = p.CommitteeId1 == null ? null : c1.Title + c1.FirstName + " " + c1.LastName,
                                     Committee2 = p.CommitteeId2 == null ? null : c2.Title + c2.FirstName + " " + c2.LastName,

@@ -42,7 +42,7 @@ public class ProposalInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var ProposalInfo = (from p in db.Proposal
                             join sem in db.Semester on p.SemesterId equals sem.Id
@@ -225,7 +225,7 @@ public class ProposalInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var proposal = (from p in db.Proposal
                         where p.StudentId1 == studentId || p.StudentId2 == studentId || p.StudentId3 == studentId
@@ -250,7 +250,7 @@ public class ProposalInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var proposal = (from p in db.Proposal
                         where p.StudentId1 == studentId || p.StudentId2 == studentId || p.StudentId3 == studentId
@@ -275,7 +275,7 @@ public class ProposalInfoController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var proposal = from p in db.Proposal where (p.SemesterId == SemesterId) && (p.StudentId1 == studentId || p.StudentId2 == studentId || p.StudentId3 == studentId) orderby p.Id select p;
 

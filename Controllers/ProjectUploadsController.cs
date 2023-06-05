@@ -26,7 +26,7 @@ public class ProjectUploadsController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var uploadRecord = (from p in db.Project
                             join sem in db.Semester on p.SemesterId equals sem.Id
@@ -100,7 +100,7 @@ public class ProjectUploadsController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var project = (from p in db.Project
                        where p.StudentId1 == studentId || p.StudentId2 == studentId || p.StudentId3 == studentId
@@ -166,10 +166,10 @@ public class ProjectUploadsController : ControllerBase
         var db = new SeniorProjectDbContext();
 
         var lecturerId = db.Lecturer.Where(x => x.Email == User.Identity.Name).Select(x => x.Id).FirstOrDefault();
-        if (lecturerId == null) return Forbid();
+        if (lecturerId == null) return StatusCode(403,"Lecturer is null!");
 
         var project = db.Project.Find(ProjectId);
-        if (project == null) return Forbid();
+        if (project == null) return StatusCode(403,"Project is null!");
 
         bool isAdvisor1 = false;
         bool isAdvisor2 = false;
@@ -179,7 +179,7 @@ public class ProjectUploadsController : ControllerBase
         if (project.Major == "MATH")
         {
             if (project.AdvisorId1 == lecturerId) isAdvisor1 = true;
-            if (!isAdvisor1) return Forbid();
+            if (!isAdvisor1) return StatusCode(403,"Only Advisor1 can upload (MATH)!");
         }
 
         if (project.Major == "COMP")
@@ -188,14 +188,14 @@ public class ProjectUploadsController : ControllerBase
             if (project.AdvisorId2 == lecturerId) isAdvisor2 = true;
             if (project.CommitteeId1 == lecturerId) isCommittee1 = true;
             if (project.CommitteeId2 == lecturerId) isCommittee2 = true;
-            if (!isAdvisor1 && !isAdvisor2 && !isCommittee1 && !isCommittee2) return Forbid();
+            if (!isAdvisor1 && !isAdvisor2 && !isCommittee1 && !isCommittee2) return StatusCode(403,"This lecturer is not related to this project!");
         }
 
         var Semester = db.Semester.Find(project.SemesterId);
-        if (Semester == null) return Forbid();
+        if (Semester == null) StatusCode(403,"SemesterId is null!");
 
         var file = FormData.Files.GetFile("file");
-        if (file == null) return Forbid();
+        if (file == null) return StatusCode(403,"File is null");
         if (file.Length > 10 * 1000000) return StatusCode(413); // payload too large
 
         string[] Extensions = new string[] { "pdf", "jpg", "jpeg", "png" };
@@ -267,7 +267,7 @@ public class ProjectUploadsController : ControllerBase
 
         if (isCommittee2)
         {
-            if (project.Committee1UploadFile != null)
+            if (project.Committee2UploadFile != null)
             {
                 System.IO.File.Delete(path + project.Committee2UploadFile);
             }

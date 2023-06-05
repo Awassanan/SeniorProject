@@ -23,7 +23,7 @@ public class ProposalUploadsController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var uploadRecord = (from p in db.Proposal
                             join sem in db.Semester on p.SemesterId equals sem.Id
@@ -95,7 +95,7 @@ public class ProposalUploadsController : ControllerBase
     {
         var db = new SeniorProjectDbContext();
 
-        var studentId = (User.Identity.Name.Split('@'))[0];
+        var studentId = (from s in db.Student where s.Email == User.Identity.Name select s.Id).FirstOrDefault();
 
         var proposal = (from p in db.Proposal
                         where p.StudentId1 == studentId || p.StudentId2 == studentId || p.StudentId3 == studentId
@@ -161,10 +161,10 @@ public class ProposalUploadsController : ControllerBase
         var db = new SeniorProjectDbContext();
 
         var lecturerId = db.Lecturer.Where(x => x.Email == User.Identity.Name).Select(x => x.Id).FirstOrDefault();
-        if (lecturerId == null) return Forbid();
+        if (lecturerId == null) return StatusCode(403,"Lecturer is null!");
 
         var proposal = db.Proposal.Find(ProposalId);
-        if (proposal == null) return Forbid();
+        if (proposal == null) return StatusCode(403,"Proposal is null!");
 
         bool isAdvisor1 = false;
         bool isAdvisor2 = false;
@@ -174,7 +174,7 @@ public class ProposalUploadsController : ControllerBase
         if (proposal.Major == "MATH")
         {
             if (proposal.AdvisorId1 == lecturerId) isAdvisor1 = true;
-            if (!isAdvisor1) return Forbid();
+            if (!isAdvisor1) return StatusCode(403,"Only Advisor1 can upload (MATH)!");
         }
 
         if (proposal.Major == "COMP")
@@ -183,19 +183,19 @@ public class ProposalUploadsController : ControllerBase
             if (proposal.AdvisorId2 == lecturerId) isAdvisor2 = true;
             if (proposal.CommitteeId1 == lecturerId) isCommittee1 = true;
             if (proposal.CommitteeId2 == lecturerId) isCommittee2 = true;
-            if (!isAdvisor1 && !isAdvisor2 && !isCommittee1 && !isCommittee2) return Forbid();
+            if (!isAdvisor1 && !isAdvisor2 && !isCommittee1 && !isCommittee2) return StatusCode(403,"This lecturer is not related to this proposal!");
         }
 
         var Semester = db.Semester.Find(proposal.SemesterId);
-        if (Semester == null) return Forbid();
+        if (Semester == null) return StatusCode(403,"SemesterId is null!");
 
         var file = FormData.Files.GetFile("file");
-        if (file == null) return Forbid();
+        if (file == null) return StatusCode(403,"File is null!");
         if (file.Length > 10 * 1000000) return StatusCode(413); // payload too large
 
         string[] Extensions = new string[] { "pdf", "jpg", "jpeg", "png" };
         string ext = file.FileName.Split(".").Last().ToLower();
-        if (!Extensions.Contains(ext)) return StatusCode(415);
+        if (!Extensions.Contains(ext)) return StatusCode(415,"Not support this file extension!");
 
         // string path = @"C:\Users\awass\Desktop\"; // Windows
         string path = Program.UploadPath + "/proposal/grading/"; // Linux
@@ -263,7 +263,7 @@ public class ProposalUploadsController : ControllerBase
 
         if (isCommittee2)
         {
-            if (proposal.Committee1UploadFile != null)
+            if (proposal.Committee2UploadFile != null)
             {
                 System.IO.File.Delete(path + proposal.Committee2UploadFile);
             }
